@@ -1,9 +1,11 @@
 package com.ui.two;
 
+import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -29,19 +31,18 @@ public class LAUNCHER extends AppCompatActivity {
     }
 
     public void setApps(){
-        GetApps getApps = new GetApps(this);
+        GetApps getApps = new GetApps(this,1);
         Drawable[][] icons = getApps.getPackagesIcon();
+        String[][] name = getApps.getName();
 
-        LinearLayout superParentLayout = findViewById(R.id.main);
+        LinearLayout superParentLayout = findViewById(R.id.scroll);
         generateView = new GenerateView(this,this);
 
         for (int i = 0; i < icons.length; i++) {
-            LinearLayout parentLayout = setLinearLayout(icons.length*4+i);
-            for (int j = 0; j < icons[i].length; j++) {
-                    setIcon(null, icons[i][j], 100, parentLayout);
-
-            }
+            LinearLayout parentLayout = setLinearLayout(1000+i);
+            setApp(name[i][0], icons[i][0], i, parentLayout);
             generateView.addViewToParent(parentLayout, superParentLayout);
+
         }
     }
     private LinearLayout setLinearLayout(int id){
@@ -50,10 +51,11 @@ public class LAUNCHER extends AppCompatActivity {
         return generateView.generateLinearLayout(layoutParams,id, LinearLayout.HORIZONTAL);
     }
 
-    private void setIcon(@Nullable String text, @NonNull Drawable icon, int id, LinearLayout parentView){
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void setApp(@Nullable String text, @NonNull Drawable icon, int id, LinearLayout parentView){
         int r = (int) generateView.dptopixel(50);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(r, r);
-        generateView.generateView(layoutParams, id, text, icon, parentView);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,r);
+        generateView.generateTextView(layoutParams, id, text, icon,getDrawable(R.drawable.bg_1), parentView);
     }
 
 

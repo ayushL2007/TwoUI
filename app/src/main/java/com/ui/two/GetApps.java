@@ -15,12 +15,12 @@ public class GetApps {
     Context context;
     int gridSize, numOfGrid;
     ArrayList<Boolean> SysAppList;
-    GetApps(Context context){
+    GetApps(Context context, int gridSize){
         this.context = context;
         this.checkPermissions();
         PackageManager packageManager = context.getPackageManager();
         packages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
-        gridSize = 4;
+        this.gridSize = gridSize;
         numOfGrid = packages.size()/gridSize+1;
         SysAppList = new ArrayList<Boolean>();
         filterSysApp();
@@ -44,7 +44,7 @@ public class GetApps {
         String[][] packageNames = new String[numOfGrid][gridSize];
         int j=0,i=0;
         for(ApplicationInfo package_:packages){
-            if(j>3){i+=1;   j=0;}
+            if(j==gridSize){i+=1;   j=0;}
             packageNames[i][j]=package_.packageName;
             j++;
         }
@@ -56,7 +56,7 @@ public class GetApps {
         Drawable[][] icons = new Drawable[numOfGrid][gridSize];
         int j=0,i=0;
         for(ApplicationInfo package_:packages){
-            if(j>3){i+=1;   j=0;}
+            if(j==gridSize){i+=1;   j=0;}
             icons[i][j]=package_.loadIcon(context.getPackageManager());
             j++;
         }
@@ -68,7 +68,7 @@ public class GetApps {
         String[][] names = new String[numOfGrid][gridSize];
         int j=0,i=0;
         for(ApplicationInfo package_:packages){
-            if(j>3){i+=1;   j=0;}
+            if(j==gridSize){i+=1;   j=0;}
             names[i][j]=(String) package_.loadLabel(context.getPackageManager());
             j++;
         }

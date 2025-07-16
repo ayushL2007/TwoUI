@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,7 +33,7 @@ public class GenerateView {
         return childLayout;
     }
 
-    public void generateView(LinearLayout.LayoutParams params, int id, String label, Drawable drawable, LinearLayout parentLayout){
+    public void generateImageView(LinearLayout.LayoutParams params, int id, String label, Drawable drawable, LinearLayout parentLayout){
         ImageView imageView = new ImageView(context);
         imageView.setImageDrawable(drawable);
         imageView.setId(id);
@@ -40,6 +41,19 @@ public class GenerateView {
         imageView.invalidate();
 
         parentLayout.addView(imageView);
+    }
+
+    public void generateTextView(LinearLayout.LayoutParams layoutParams, int id, String label, Drawable icon,Drawable background, LinearLayout parentLayout){
+        TextView textView = new TextView(context);
+        textView.setCompoundDrawables(icon, null,null,null);
+        textView.setId(id);
+        textView.setText(label);
+        textView.setLayoutParams(layoutParams);
+        textView.setBackground(background);
+        textView.invalidate();
+
+
+        parentLayout.addView(textView);
     }
 
     public float dptopixel(float dp){
