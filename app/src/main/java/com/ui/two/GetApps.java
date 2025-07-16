@@ -5,6 +5,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class GetApps {
@@ -12,6 +14,7 @@ public class GetApps {
 
     Context context;
     int gridSize, numOfGrid;
+    ArrayList<Boolean> SysAppList;
     GetApps(Context context){
         this.context = context;
         this.checkPermissions();
@@ -19,6 +22,8 @@ public class GetApps {
         packages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
         gridSize = 4;
         numOfGrid = packages.size()/gridSize+1;
+        SysAppList = new ArrayList<Boolean>();
+        filterSysApp();
     }
 
     private boolean checkPermissions(){
@@ -26,6 +31,14 @@ public class GetApps {
         return true;
     }
 
+    private void filterSysApp(){
+        Iterator<ApplicationInfo> applicationInfoIterator = packages.iterator();
+        while(applicationInfoIterator.hasNext()){
+            ApplicationInfo applicationInfo = applicationInfoIterator.next();
+            boolean isInstalled = (applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM)!=ApplicationInfo.FLAG_SYSTEM;
+            if (!isInstalled)  applicationInfoIterator.remove();
+        }
+    }
     public String[][] getPackagesName(){
 
         String[][] packageNames = new String[numOfGrid][gridSize];
