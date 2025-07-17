@@ -13,4 +13,7 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="Button.ColorScheme.Night" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">#7C7171</item>
+    </style>
 </resources>

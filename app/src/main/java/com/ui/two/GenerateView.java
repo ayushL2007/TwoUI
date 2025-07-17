@@ -8,6 +8,8 @@ import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,15 +47,33 @@ public class GenerateView {
 
     public void generateTextView(LinearLayout.LayoutParams layoutParams, int id, String label, Drawable icon,Drawable background, LinearLayout parentLayout){
         TextView textView = new TextView(context);
-        textView.setCompoundDrawables(icon, null,null,null);
         textView.setId(id);
         textView.setText(label);
         textView.setLayoutParams(layoutParams);
-        textView.setBackground(background);
+        textView.setCompoundDrawablesWithIntrinsicBounds(icon,null, null,null);
+        //textView.setBackground(background);
         textView.invalidate();
 
 
         parentLayout.addView(textView);
+    }
+
+    public View generateVertStroke(){
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 3);
+        layoutParams.bottomMargin = 10;
+        View view = new View(context);
+        view.setLayoutParams(layoutParams);
+        view.setBackground(activity.getDrawable(R.drawable.bg_2));
+        return view;
+    }
+
+    public void generateCheckBox(int Id, LinearLayout parentLayout, LinearLayout.LayoutParams layoutParams){
+        CheckBox checkBox = new CheckBox(context);
+        checkBox.setId(Id);
+        checkBox.setLayoutParams(layoutParams);
+        checkBox.invalidate();
+
+        parentLayout.addView(checkBox);
     }
 
     public float dptopixel(float dp){
