@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -23,10 +22,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
-import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 
-public class LAUNCHER extends AppCompatActivity {
+public class HideApps extends AppCompatActivity {
     private GenerateView generateView;
     Drawable[][] icons;
     String[][] names, packageNames;
@@ -94,8 +92,8 @@ public class LAUNCHER extends AppCompatActivity {
             public void onClick(View v) {
                 Method method = null;
                 try {
-                    method = com.ui.two.LAUNCHER.class.getMethod(methodName, new Class[]{Integer.class, Integer.class});
-                    method.invoke(com.ui.two.LAUNCHER.this,param1, param2);
+                    method = HideApps.class.getMethod(methodName, new Class[]{Integer.class, Integer.class});
+                    method.invoke(HideApps.this,param1, param2);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

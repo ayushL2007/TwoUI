@@ -70,6 +70,7 @@ public class GenerateView {
     public void generateCheckBox(int Id, LinearLayout parentLayout, LinearLayout.LayoutParams layoutParams){
         CheckBox checkBox = new CheckBox(context);
         checkBox.setId(Id);
+        checkBox.setChecked(false);
         checkBox.setLayoutParams(layoutParams);
         checkBox.invalidate();
 
