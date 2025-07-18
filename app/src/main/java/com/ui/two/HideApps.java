@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -21,11 +22,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 
 public class LAUNCHER extends AppCompatActivity {
     private GenerateView generateView;
+    Drawable[][] icons;
+    String[][] names, packageNames;
+    FileIO fileIO;
+    SideLineTask sideLineTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,19 +42,23 @@ public class LAUNCHER extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+        sideLineTask = new SideLineTask(this, this);
+        fileIO = new FileIO(this);
         setApps();
     }
 
     public void setApps(){
         GetApps getApps = new GetApps(this,1);
-        Drawable[][] icons = getApps.getPackagesIcon();
-        String[][] name = getApps.getName();
-
+        icons = getApps.getPackagesIcon();
+        names = getApps.getName();
+        packageNames = getApps.getPackagesName();
         LinearLayout superParentLayout = findViewById(R.id.scroll);
         generateView = new GenerateView(this,this);
         for (int i = 0; i < icons.length; i++) {
-            if(name[i][0]!=null) {
-                addApp_toList(i, icons[i][0], name[i][0], icons.length, superParentLayout);
+            if(names[i][0]!=null) {
+                addApp_toList(i, icons[i][0], names[i][0], icons.length, superParentLayout);
             }
         }
     }
@@ -58,7 +68,7 @@ public class LAUNCHER extends AppCompatActivity {
      * App Icon:ImageView:i+arr.length
      * App Name:TextView:i
      * App CheckBox:CheckBox:i+(arr.length*2)
-     * LinearLayout:orientation=horizontal:1000+i
+     * LinearLayout:orientation=horizontal:10000+i
      *             :Contains the AppIcon, AppName, CheckBox
      * @param i
      * @param icon
@@ -68,7 +78,7 @@ public class LAUNCHER extends AppCompatActivity {
      */
     public void addApp_toList(int i, Drawable icon, String AppName,int length, LinearLayout superParentLayout){
         View view = generateView.generateVertStroke();
-        LinearLayout parentLayout = setLinearLayout(1000 + i);
+        LinearLayout parentLayout = setLinearLayout(10000 + i);
         setAppIcon(icon,i+length,parentLayout);
         setAppText(AppName, icon, i, parentLayout);
         setCheckBox(i+length*2, parentLayout);
@@ -98,13 +108,35 @@ public class LAUNCHER extends AppCompatActivity {
         checkBox.setChecked(!checkBox.isChecked());
         checkBox.invalidate();
         showAddButton();
-
     }
 
     private void showAddButton(){
         Button button = findViewById(R.id.hide_App);
         button.setVisibility(RelativeLayout.VISIBLE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideSelectedApps();
+            }
+        });
         button.invalidate();
+    }
+
+    public void hideSelectedApps(){
+        StringBuilder stringBuilder = new StringBuilder();
+        CheckBox checkBox;
+        for (int i = 0; i < icons.length; i++) {
+            checkBox = findViewById(i+icons.length*2);
+            if(checkBox!=null && checkBox.isChecked()){
+                Log.e("i:",String.valueOf(i));
+                String tmp = names[i][0]+"##"+icons[i][0].toString()+"##"+packageNames[i][0];
+                stringBuilder.append(tmp).append("\n");
+            }
+        }
+        File file = new File(this.getFilesDir(), "trial.txt");
+        fileIO.writeInternalFile(file,stringBuilder.toString(),true);
+
+        Log.e("stringbuilder",stringBuilder.toString());
     }
 
     private LinearLayout setLinearLayout(int id){
