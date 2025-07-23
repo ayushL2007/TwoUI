@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -22,9 +23,20 @@ public class GenerateView {
     final Context context;
     final Activity activity;
 
+    public float scrn_height, scrn_width;
+
     GenerateView(Context context, Activity activity){
         this.context= context;
         this.activity = activity;
+        setDisplayProp();
+    }
+
+    public void setDisplayProp(){
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        scrn_height = displayMetrics.heightPixels;
+        scrn_width = displayMetrics.widthPixels;
     }
 
     public LinearLayout generateLinearLayout(LinearLayout.LayoutParams layoutParams, int id, int orientation){
@@ -45,12 +57,13 @@ public class GenerateView {
         parentLayout.addView(imageView);
     }
 
-    public void generateTextView(LinearLayout.LayoutParams layoutParams, int id, String label, Drawable icon,Drawable background, LinearLayout parentLayout){
+    public void generateTextView(LinearLayout.LayoutParams layoutParams, int id, String label, Drawable icon,Drawable background, LinearLayout parentLayout, int Gravity){
         TextView textView = new TextView(context);
         textView.setId(id);
         textView.setText(label);
         textView.setLayoutParams(layoutParams);
         textView.setCompoundDrawablesWithIntrinsicBounds(icon,null, null,null);
+        textView.setGravity(Gravity);
         //textView.setBackground(background);
         textView.invalidate();
 

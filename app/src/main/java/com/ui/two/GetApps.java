@@ -94,4 +94,8 @@ public class GetApps {
         }
         return names;
     }
+
+    public int getLength(){
+        return packages.size();
+    }
 }

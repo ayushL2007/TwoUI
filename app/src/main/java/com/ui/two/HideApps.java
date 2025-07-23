@@ -1,11 +1,13 @@
 package com.ui.two;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,7 +25,15 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
+/**
+ * {@link HideApps#onCreate(Bundle)} -> {@link HideApps#setApps()} -> 
+ * {@link HideApps#addApp_toList(int, Drawable, String, int, LinearLayout)}
+ *                 |-->{@link HideApps#setAppIcon(Drawable, int, LinearLayout)}
+ *                |--->{@link HideApps#setAppText(String, Drawable, int, LinearLayout)}
+ *               |---->{@link HideApps#setCheckBox(int, LinearLayout)}
+ */
 public class HideApps extends AppCompatActivity {
     private GenerateView generateView;
     Drawable[][] icons;
@@ -40,7 +50,6 @@ public class HideApps extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
 
         sideLineTask = new SideLineTask(this, this);
         fileIO = new FileIO(this);
@@ -78,23 +87,24 @@ public class HideApps extends AppCompatActivity {
         View view = generateView.generateVertStroke();
         LinearLayout parentLayout = setLinearLayout(10000 + i);
         setAppIcon(icon,i+length,parentLayout);
-        setAppText(AppName, icon, i, parentLayout);
+        setAppText(AppName, i, parentLayout);
         setCheckBox(i+length*2, parentLayout);
 
-        setOnClickListener(parentLayout, "selectApp", i, length);
+        setOnClickListener(parentLayout, HideApps.class, "selectApp", i, length);
         generateView.addViewToParent(parentLayout, superParentLayout);
         generateView.addViewToParent(view, superParentLayout);
     }
 
-    public void setOnClickListener(View view, String methodName, int param1,int param2)  {
+    public void setOnClickListener(View view,Class cl, String methodName, int param1,int param2)  {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Method method = null;
                 try {
-                    method = HideApps.class.getMethod(methodName, new Class[]{Integer.class, Integer.class});
+                    method = cl.getMethod(methodName, new Class[]{Integer.class, Integer.class});
                     method.invoke(HideApps.this,param1, param2);
                 } catch (Exception e) {
+                    Log.e("class", cl.toString());
                     throw new RuntimeException(e);
                 }
             }
@@ -123,18 +133,27 @@ public class HideApps extends AppCompatActivity {
     public void hideSelectedApps(){
         StringBuilder stringBuilder = new StringBuilder();
         CheckBox checkBox;
+
         for (int i = 0; i < icons.length; i++) {
             checkBox = findViewById(i+icons.length*2);
-            if(checkBox!=null && checkBox.isChecked()){
+
+            if(checkBox!=null && checkBox.isChecked())
+            {
                 Log.e("i:",String.valueOf(i));
                 String tmp = names[i][0]+"##"+icons[i][0].toString()+"##"+packageNames[i][0];
                 stringBuilder.append(tmp).append("\n");
             }
         }
+
         File file = new File(this.getFilesDir(), "trial.txt");
         fileIO.writeInternalFile(file,stringBuilder.toString(),true);
 
         Log.e("stringbuilder",stringBuilder.toString());
+        Intent intent = new Intent(this, HomeScreen.class);
+        intent.putExtra("AppNames", names);
+        intent.putExtra("packageNames", packageNames);
+
+        startActivity(intent);
     }
 
     private LinearLayout setLinearLayout(int id){
@@ -150,14 +169,14 @@ public class HideApps extends AppCompatActivity {
         generateView.generateImageView(layoutParams, id, null,drawable, parentView);
     }
     @SuppressLint("UseCompatLoadingForDrawables")
-    private void setAppText(@Nullable String text, @NonNull Drawable icon, int id, LinearLayout parentView){
+    private void setAppText(@Nullable String text, int id, LinearLayout parentView){
         int r = (int) generateView.dptopixel(50);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(r*3, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.bottomMargin = layoutParams.leftMargin = layoutParams.topMargin
                 = r/5;
 
-        generateView.generateTextView(layoutParams, id, text, null, getDrawable(R.drawable.bg_1), parentView);
+        generateView.generateTextView(layoutParams, id, text, null, getDrawable(R.drawable.bg_1), parentView, Gravity.NO_GRAVITY);
     }
 
     private void setCheckBox(int id, LinearLayout parentLayout){

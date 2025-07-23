@@ -22,4 +22,21 @@ public class SideLineTask {
         if (view!=null) toast.setView(view);
         toast.show();
     }
+
+    public Object[][] changeDimension(Object[][] matrix, int row){
+        int column = (int) Math.ceil(matrix.length/(double) row);
+        Object[][] modified_matrix = new Object[column][row];
+        int k=0,m=0;
+        for (Object[] tmp:matrix) {
+            for (Object elem:tmp) {
+                if(k>=row)  m++;
+                modified_matrix[m][k]=elem;
+                k++;
+            }
+        }
+
+        return modified_matrix;
+    }
+
+
 }
