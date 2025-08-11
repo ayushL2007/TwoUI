@@ -2,6 +2,10 @@ package com.ui.two;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Toast;
 
@@ -10,9 +14,14 @@ import androidx.annotation.Nullable;
 public class SideLineTask {
     final Context context;
     final Activity activity;
-    SideLineTask(Context context, Activity activity){
+    public SideLineTask(Context context, Activity activity){
         this.context = context;
         this.activity=activity;
+    }
+
+    public SideLineTask(Context context){
+        this.context = context;
+        this.activity=(Activity) context;
     }
 
     public void showToast(String text, int duration,@Nullable View view){
@@ -39,4 +48,7 @@ public class SideLineTask {
     }
 
 
+    public Bitmap drawable_to_bitmap(Drawable drawable){
+        return ((BitmapDrawable) drawable).getBitmap();
+    }
 }

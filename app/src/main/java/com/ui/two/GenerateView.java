@@ -25,9 +25,9 @@ public class GenerateView {
 
     public float scrn_height, scrn_width;
 
-    GenerateView(Context context, Activity activity){
+    public GenerateView(Context context){
         this.context= context;
-        this.activity = activity;
+        this.activity =(Activity) context;
         setDisplayProp();
     }
 

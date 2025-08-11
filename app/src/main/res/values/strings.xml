@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TWO UI</string>
+    <string name="hide_app">Hide App</string>
+    <string name="two_ui_hide_app">TWO UI (Hide App)</string>
 </resources>

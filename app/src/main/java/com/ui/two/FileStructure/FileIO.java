@@ -1,6 +1,7 @@
-package com.ui.two;
+package com.ui.two.FileStructure;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -9,11 +10,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class FileIO {
     final Context context;
-    FileIO(Context context){
+    public FileIO(Context context){
         this.context = context;
     }
 
@@ -35,7 +36,7 @@ public class FileIO {
         return stringBuilder.toString();
     }
 
-    public void writeInternalFile(File file,String content,boolean isAppended){
+    public void writeFile(File file,String content,boolean isAppended){
         try {
             if(!file.exists() && !file.createNewFile())  return;
             FileOutputStream fileOutputStream = new FileOutputStream(file, isAppended);
@@ -46,4 +47,27 @@ public class FileIO {
             Log.e("Exception : ", e.toString());
         }
     }
+
+    public byte[] readFileByte(File file){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                return Files.readAllBytes(file.toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
+    }
+
+    public void writeFileByte(File file,byte[] bytes, boolean append){
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file, append);
+            fileOutputStream.write(bytes);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        }catch (IOException E){
+            Log.e(E.toString(), E.toString());
+        }
+    }
+
 }

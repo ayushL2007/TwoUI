@@ -1,7 +1,6 @@
 package com.ui.two;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -16,29 +15,35 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.ui.two.FileStructure.FileHandler;
+import com.ui.two.FileStructure.FileIO;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 /**
  * {@link HideApps#onCreate(Bundle)} -> {@link HideApps#setApps()} -> 
  * {@link HideApps#addApp_toList(int, Drawable, String, int, LinearLayout)}
  *                 |-->{@link HideApps#setAppIcon(Drawable, int, LinearLayout)}
- *                |--->{@link HideApps#setAppText(String, Drawable, int, LinearLayout)}
+ *                |--->{@link HideApps#setAppText(String, int, LinearLayout)}
  *               |---->{@link HideApps#setCheckBox(int, LinearLayout)}
  */
 public class HideApps extends AppCompatActivity {
+
+    final static public byte[] REGEX_FOR_DRAWABLE = "###".getBytes();
+
     private GenerateView generateView;
     Drawable[][] icons;
     String[][] names, packageNames;
-    FileIO fileIO;
+    FileHandler fileHandler;
     SideLineTask sideLineTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +57,7 @@ public class HideApps extends AppCompatActivity {
         });
 
         sideLineTask = new SideLineTask(this, this);
-        fileIO = new FileIO(this);
+        fileHandler = new FileHandler(this);
         setApps();
     }
 
@@ -62,7 +67,7 @@ public class HideApps extends AppCompatActivity {
         names = getApps.getName();
         packageNames = getApps.getPackagesName();
         LinearLayout superParentLayout = findViewById(R.id.scroll);
-        generateView = new GenerateView(this,this);
+        generateView = new GenerateView(this);
         for (int i = 0; i < icons.length; i++) {
             if(names[i][0]!=null) {
                 addApp_toList(i, icons[i][0], names[i][0], icons.length, superParentLayout);
@@ -71,11 +76,11 @@ public class HideApps extends AppCompatActivity {
     }
 
     /**
-     * Id correlation with "i":
-     * App Icon:ImageView:i+arr.length
-     * App Name:TextView:i
-     * App CheckBox:CheckBox:i+(arr.length*2)
-     * LinearLayout:orientation=horizontal:10000+i
+     * Id correlation with "i":<br>
+     * App Icon:ImageView:i+arr.length<br>
+     * App Name:TextView:i<br>
+     * App CheckBox:CheckBox:i+(arr.length*2)<br>
+     * LinearLayout:orientation=horizontal:10000+i<br>
      *             :Contains the AppIcon, AppName, CheckBox
      * @param i
      * @param icon
@@ -132,6 +137,7 @@ public class HideApps extends AppCompatActivity {
 
     public void hideSelectedApps(){
         StringBuilder stringBuilder = new StringBuilder();
+        ArrayList<Byte> imageData = new ArrayList<>();
         CheckBox checkBox;
 
         for (int i = 0; i < icons.length; i++) {
@@ -139,21 +145,13 @@ public class HideApps extends AppCompatActivity {
 
             if(checkBox!=null && checkBox.isChecked())
             {
-                Log.e("i:",String.valueOf(i));
-                String tmp = names[i][0]+"##"+icons[i][0].toString()+"##"+packageNames[i][0];
-                stringBuilder.append(tmp).append("\n");
+//FIXME $date$ Fix the hiding selected app part
             }
         }
 
-        File file = new File(this.getFilesDir(), "trial.txt");
-        fileIO.writeInternalFile(file,stringBuilder.toString(),true);
-
         Log.e("stringbuilder",stringBuilder.toString());
-        Intent intent = new Intent(this, HomeScreen.class);
-        intent.putExtra("AppNames", names);
-        intent.putExtra("packageNames", packageNames);
 
-        startActivity(intent);
+        //fileIO.writeFileByte(new File(getFilesDir(),"image.txt"), imageData.toArray(), true);
     }
 
     private LinearLayout setLinearLayout(int id){

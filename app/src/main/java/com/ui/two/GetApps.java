@@ -39,6 +39,7 @@ public class GetApps {
         return true;
     }
 
+
     private void filterSysApp(){
         Iterator<ApplicationInfo> applicationInfoIterator = packages.iterator();
         while(applicationInfoIterator.hasNext()){
